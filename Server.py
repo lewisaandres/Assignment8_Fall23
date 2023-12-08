@@ -38,7 +38,12 @@ def GetServerData() -> []:
     list = []
 
     for i in payload:
-        list.append([i.get("payload.Traffic Sensor 110"), i.get("time")])
+        payload_data = i.get("payload")
+        time_object = i.get("time")
+        just_time = time_object.time().strftime('%H:%M:%S')
+
+        if "Traffic Sensor 110" in payload_data:
+             list.append([payload_data["Traffic Sensor 110"], just_time])
 
     return list 
 
