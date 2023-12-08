@@ -7,62 +7,82 @@ import errno
 from dataclasses import dataclass
 import random
 import sys
+import MongoDBConnection as mongo
+import pymongo
 
 maxPacketSize = 1024
-defaultPort = 0 #TODO: Set this to your preferred port
+defaultPort = 1024 #TODO: Set this to your preferred port
+
+db_connection = "mongodb+srv://0000:0000@cluster0.cxagbxv.mongodb.net/?retryWrites=true&w=majority"
 
 def GetFreePort(minPort: int = 1024, maxPort: int = 65535):
     for i in range(minPort, maxPort):
-        print("Testing port",i);
+        print("Testing port",i)
         with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as potentialPort:
             try:
-                potentialPort.bind(('localhost', i));
-                potentialPort.close();
-                print("Server listening on port",i);
+                potentialPort.bind(('localhost', i))
+                potentialPort.close()
+                print("Server listening on port",i)
                 return i
             except socket.error as e:
                 if e.errno == errno.EADDRINUSE:
-                    print("Port",i,"already in use. Checking next...");
+                    print("Port",i,"already in use. Checking next...")
                 else:
-                    print("An exotic error occurred:",e);
+                    print("An exotic error occurred:",e)
 
 def GetServerData() -> []:
-    import MongoDBConnection as mongo
-    return mongo.QueryDatabase();
+    connection = pymongo.MongoClient(db_connection)
+    database = connection["test"]
+    collection = database["traffic data"]
+    payload = collection.find({"topic":"Lewis/RoadA/Sensor"})
+    list = []
 
+    for i in payload:
+        list.append([i.get("payload.Traffic Sensor 110"), i.get("time")])
 
-
-
-
+    return list 
 
 def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
-    pass; #TODO: Implement TCP Code, use GetServerData to query the database.
+    #TODO: Implement TCP Code, use GetServerData to query the database.
+    
+    client_message = str(tcpSocket.recv(1024).decode())
 
+    print(f"Client's message: {client_message}")
 
+    # data = ""
+    # for i in GetServerData():
+    #     data = "Traffic Senser: " + str(i[0]) + "\nTime: " + str(i[1])
 
-
+    data = GetServerData()
+    try: 
+        tcpSocket.send(str(data).encode())
+        print("data sent to client")
+    except: 
+        print("didnt send data from ListenOnTCP()")
 
 
 
 def CreateTCPSocket() -> socket.socket:
-    tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM);
+    tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcpPort = defaultPort
-    print("TCP Port:",tcpPort);
-    tcpSocket.bind(('localhost', tcpPort));
-    return tcpSocket;
+    print("TCP Port:",tcpPort)
+    tcpSocket.bind(('localhost', tcpPort))
+    return tcpSocket
 
 def LaunchTCPThreads():
-    tcpSocket = CreateTCPSocket();
-    tcpSocket.listen(5);
+    tcpSocket = CreateTCPSocket()
+    tcpSocket.listen(5)
     while True:
-        connectionSocket, connectionAddress = tcpSocket.accept();
-        connectionThread = threading.Thread(target=ListenOnTCP, args=[connectionSocket, connectionAddress]);
-        connectionThread.start();
+        connectionSocket, connectionAddress = tcpSocket.accept()
+        connectionThread = threading.Thread(target=ListenOnTCP, args=[connectionSocket, connectionAddress])
+        connectionThread.start()
 
 if __name__ == "__main__":
-    tcpThread = threading.Thread(target=LaunchTCPThreads);
-    tcpThread.start();
+    tcpThread = threading.Thread(target=LaunchTCPThreads)
+    tcpThread.start()
+
+    exitSignal = False
 
     while not exitSignal:
-        time.sleep(1);
-    print("Ending program by exit signal...");
+        time.sleep(1)
+    print("Ending program by exit signal...")
