@@ -24,10 +24,8 @@ while clientMessage != "exit":
 
     tcpSocket.send(clientMessage.encode())
 
-    server_message = tcpSocket.recv(1024).decode()
-
-    print(f"Best highway to take right now: \n{server_message}")
-
+    server_message = tcpSocket.recv(1024).decode()  
+    print(f"Best highway to take right now: \n{server_message}\n")
     #TODO: Send the message to your server
     #TODO: Receive a reply from the server for the best highway to take
     #TODO: Print the best highway to take
