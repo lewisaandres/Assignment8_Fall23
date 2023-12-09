@@ -39,32 +39,32 @@ def GetBestFreeway(average_list: dict):
     return best_freeway
 
 def GetServerData() -> []:
-    connection = pymongo.MongoClient(db_connection)
-    database = connection["test"]
-    collection = database["traffic_collection"]
+    # connection = pymongo.MongoClient(db_connection)
+    # database = connection["test"]
+    # collection = database["traffic_collection"]
 
-    recent_document = collection.find_one(sort=[("_id", pymongo.DESCENDING)])
-    recent_time = recent_document.get("time")
-    document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
+    # recent_document = collection.find_one(sort=[("_id", pymongo.DESCENDING)])
+    # recent_time = recent_document.get("time")
+    # document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
 
-    list_91, list_110, list_405 = [], [], []
+    # list_91, list_110, list_405 = [], [], []
 
-    for i in document:
-        payload_data = i.get("payload")
-        list_91.append(payload_data["91_sensor"])
-        list_110.append(payload_data["110_sensor"])
-        list_405.append(payload_data["405_sensor"])
+    # for i in document:
+    #     payload_data = i.get("payload")
+    #     list_91.append(payload_data["91_sensor"])
+    #     list_110.append(payload_data["110_sensor"])
+    #     list_405.append(payload_data["405_sensor"])
 
 
-    average_110 = sum(list_110) / len(list_110)
-    average_91 = sum(list_91) / len(list_91)
-    average_405 = sum(list_405) / len(list_405)
+    # average_110 = sum(list_110) / len(list_110)
+    # average_91 = sum(list_91) / len(list_91)
+    # average_405 = sum(list_405) / len(list_405)
 
-    average_list = {
-        "110 Freeway": average_110,
-        "91 Freeway" : average_91, 
-        "405 Freeway": average_405
-    }
+    # average_list = {
+    #     "110 Freeway": average_110,
+    #     "91 Freeway" : average_91, 
+    #     "405 Freeway": average_405
+    # }
 
     # Uncomment below to send any sensor payload values and times to check the 5 min interval documentations for integrity. 
     # document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
@@ -74,8 +74,8 @@ def GetServerData() -> []:
     
     # return list
 
-    connection.close()
-    return average_list
+    # connection.close()
+    return mongo.QueryDatabase()
 
 
 def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
@@ -103,7 +103,7 @@ def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
 def CreateTCPSocket() -> socket.socket:
     tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     tcpPort = defaultPort
-    print("TCP Port:",tcpPort)
+    print("Server is running...\nTCP Port:",tcpPort)
     tcpSocket.bind(('localhost', tcpPort))
     return tcpSocket
 
