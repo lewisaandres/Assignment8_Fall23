@@ -35,8 +35,10 @@ def GetServerData() -> []:
     connection = pymongo.MongoClient(db_connection)
     database = connection["test"]
     collection = database["traffic_collection"]
-    
-    document = collection.find()#.sort('time', -1)
+
+    recent_document = collection.find_one(sort=[("_id", pymongo.DESCENDING)])
+    recent_time = recent_document.get("time")
+    document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
 
     list_91, list_110, list_405 = [], [], []
 
@@ -46,8 +48,8 @@ def GetServerData() -> []:
         list_110.append(payload_data["110_sensor"])
         list_405.append(payload_data["405_sensor"])
 
-    numbers_110 = list_110[:5]
     numbers_91 = list_91[:5]
+    numbers_110 = list_110[:5]
     numbers_405 = list_405[:5]
 
     average_110 = sum(numbers_110) / len(numbers_110)
@@ -65,7 +67,6 @@ def GetServerData() -> []:
     best_freeway = next((key, value) for key, value in average_list.items() if value == min_average)
 
     return best_freeway
-
 
 def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
     #TODO: Implement TCP Code, use GetServerData to query the database.
