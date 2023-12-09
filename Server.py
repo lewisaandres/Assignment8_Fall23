@@ -35,10 +35,7 @@ def GetBestFreeway(average_list: dict):
     min_average = min(average_list["91 Freeway"], average_list["110 Freeway"], average_list["405 Freeway"])
 
     best_freeway = next((key, value) for key, value in average_list.items() if value == min_average)
-    #document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
-    # list = []
-    # for i in document:
-    #     list.append([i.get("payload").get("91_sensor"), i.get("time")])
+
     return best_freeway
 
 def GetServerData() -> []:
@@ -68,7 +65,14 @@ def GetServerData() -> []:
         "91 Freeway" : average_91, 
         "405 Freeway": average_405
     }
+
+    # Uncomment below to send any sensor payload values and times to check the 5 min interval documentations for integrity. 
+    # document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
+    # list = []
+    # for i in document:
+    #     list.append([i.get("payload").get("91_sensor"), i.get("time")])
     
+    # return list
     return average_list
 
 
@@ -85,6 +89,9 @@ def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
         list_freeways = str("\nList of freeways with average values:\n").encode()
         best_freeway = str("\n\nBest freeway to use: \n").encode()
         tcpSocket.send(list_freeways + str(data).encode() + best_freeway + str(data2).encode())
+        
+        # Uncomment below to check 5 min interval queries of documents
+        # tcpSocket.send(str(data).encode())
         print("data sent to client")
     except: 
         print("didnt send data from ListenOnTCP()")
