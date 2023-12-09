@@ -48,13 +48,13 @@ def GetServerData() -> []:
         list_110.append(payload_data["110_sensor"])
         list_405.append(payload_data["405_sensor"])
 
-    numbers_91 = list_91[:5]
-    numbers_110 = list_110[:5]
-    numbers_405 = list_405[:5]
+    # numbers_91 = list_91[]
+    # numbers_110 = list_110[]
+    # numbers_405 = list_405[:5]
 
-    average_110 = sum(numbers_110) / len(numbers_110)
-    average_91 = sum(numbers_91) / len(numbers_91)
-    average_405 = sum(numbers_405) / len(numbers_405)
+    average_110 = sum(list_110) / len(list_110)
+    average_91 = sum(list_91) / len(list_91)
+    average_405 = sum(list_405) / len(list_405)
 
     average_list = {
         "110 Freeway": average_110,
