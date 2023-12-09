@@ -73,6 +73,8 @@ def GetServerData() -> []:
     #     list.append([i.get("payload").get("91_sensor"), i.get("time")])
     
     # return list
+
+    connection.close()
     return average_list
 
 
