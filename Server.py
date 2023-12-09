@@ -31,6 +31,16 @@ def GetFreePort(minPort: int = 1024, maxPort: int = 65535):
                 else:
                     print("An exotic error occurred:",e)
 
+def GetBestFreeway(average_list: dict): 
+    min_average = min(average_list["91 Freeway"], average_list["110 Freeway"], average_list["405 Freeway"])
+
+    best_freeway = next((key, value) for key, value in average_list.items() if value == min_average)
+    #document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
+    # list = []
+    # for i in document:
+    #     list.append([i.get("payload").get("91_sensor"), i.get("time")])
+    return best_freeway
+
 def GetServerData() -> []:
     connection = pymongo.MongoClient(db_connection)
     database = connection["test"]
@@ -48,9 +58,6 @@ def GetServerData() -> []:
         list_110.append(payload_data["110_sensor"])
         list_405.append(payload_data["405_sensor"])
 
-    # numbers_91 = list_91[]
-    # numbers_110 = list_110[]
-    # numbers_405 = list_405[:5]
 
     average_110 = sum(list_110) / len(list_110)
     average_91 = sum(list_91) / len(list_91)
@@ -62,11 +69,8 @@ def GetServerData() -> []:
         "405 Freeway": average_405
     }
     
-    min_average = min(average_110, average_91, average_405)
+    return average_list
 
-    best_freeway = next((key, value) for key, value in average_list.items() if value == min_average)
-
-    return best_freeway
 
 def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
     #TODO: Implement TCP Code, use GetServerData to query the database.
@@ -76,8 +80,11 @@ def ListenOnTCP(tcpSocket: socket.socket, socketAddress):
     print(f"Client's message: {client_message}")
 
     data = GetServerData()
+    data2 = GetBestFreeway(GetServerData())
     try: 
-        tcpSocket.send(str(data).encode())
+        list_freeways = str("\nList of freeways with average values:\n").encode()
+        best_freeway = str("\n\nBest freeway to use: \n").encode()
+        tcpSocket.send(list_freeways + str(data).encode() + best_freeway + str(data2).encode())
         print("data sent to client")
     except: 
         print("didnt send data from ListenOnTCP()")
