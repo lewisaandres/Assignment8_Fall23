@@ -6,8 +6,8 @@ import contextlib
 import errno
 
 maxPacketSize = 1024
-defaultPort = 1024 # TODO: Change this to your expected port
-serverIP = 'localhost' #TODO: Change this to your instance IP
+defaultPort = 1024 
+serverIP = 'localhost'
 
 tcpSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
@@ -26,9 +26,6 @@ while clientMessage != "exit":
 
     server_message = tcpSocket.recv(1024).decode()  
     print(f"{server_message}\n")
-    #TODO: Send the message to your server
-    #TODO: Receive a reply from the server for the best highway to take
-    #TODO: Print the best highway to take
-    
+
 tcpSocket.close()
 

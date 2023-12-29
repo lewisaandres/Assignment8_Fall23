@@ -14,7 +14,7 @@ import pymongo
 maxPacketSize = 1024
 defaultPort = 1024 #TODO: Set this to your preferred port
 
-db_connection = "mongodb+srv://0000:0000@cluster0.cxagbxv.mongodb.net/?retryWrites=true&w=majority"
+db_connection = str(input("Type in the mongodb connection url"))
 
 def GetFreePort(minPort: int = 1024, maxPort: int = 65535):
     for i in range(minPort, maxPort):
@@ -39,42 +39,6 @@ def GetBestFreeway(average_list: dict):
     return best_freeway
 
 def GetServerData() -> []:
-    # connection = pymongo.MongoClient(db_connection)
-    # database = connection["test"]
-    # collection = database["traffic_collection"]
-
-    # recent_document = collection.find_one(sort=[("_id", pymongo.DESCENDING)])
-    # recent_time = recent_document.get("time")
-    # document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
-
-    # list_91, list_110, list_405 = [], [], []
-
-    # for i in document:
-    #     payload_data = i.get("payload")
-    #     list_91.append(payload_data["91_sensor"])
-    #     list_110.append(payload_data["110_sensor"])
-    #     list_405.append(payload_data["405_sensor"])
-
-
-    # average_110 = sum(list_110) / len(list_110)
-    # average_91 = sum(list_91) / len(list_91)
-    # average_405 = sum(list_405) / len(list_405)
-
-    # average_list = {
-    #     "110 Freeway": average_110,
-    #     "91 Freeway" : average_91, 
-    #     "405 Freeway": average_405
-    # }
-
-    # Uncomment below to send any sensor payload values and times to check the 5 min interval documentations for integrity. 
-    # document = collection.find({"time": {"$gte": recent_time - timedelta(minutes=5)}}).sort("time", pymongo.DESCENDING)
-    # list = []
-    # for i in document:
-    #     list.append([i.get("payload").get("91_sensor"), i.get("time")])
-    
-    # return list
-
-    # connection.close()
     return mongo.QueryDatabase()
 
 
