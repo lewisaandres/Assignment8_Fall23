@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import time
 
 DBName = "test" #Use this to change which Database we're accessing
-connectionURL = "mongodb+srv://0000:0000@cluster0.cxagbxv.mongodb.net/?retryWrites=true&w=majority" #Put your database URL here
+connectionURL = "" #Put your database URL here
 sensorTable = "traffic_collection" #Change this to the name of your sensor data table
 
 def QueryToList(query):
